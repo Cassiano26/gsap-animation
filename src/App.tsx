@@ -8,8 +8,8 @@ import { gsap } from "gsap"
 gsap.registerPlugin(useGSAP)
 
 type directions = {
-  yDirection: "up" | "down" | "ahead"
-  xDirection: "left" | "right" | "ahead"
+  yDirection: number
+  xDirection: number
 }
 
 export default function App() {
@@ -19,11 +19,14 @@ export default function App() {
   const lastPositionX = useRef<number>(500)
 
   const [position, setPosition] = useState<directions>({
-    yDirection: 'ahead',
-    xDirection: 'ahead'
+    yDirection: 0,
+    xDirection: 0
   })
 
   const timer = useRef<number | NodeJS.Timeout | null>()
+  const timerYReturn = useRef<number | NodeJS.Timeout | null>()
+
+
   const squareOut = useRef<HTMLDivElement>(null)
   const square = useRef<HTMLDivElement>(null)
 
@@ -32,53 +35,53 @@ export default function App() {
     function handleMouseMovement(e: MouseEvent) {
       const {clientX, clientY} = e
 
-      if (squareOut.current?.clientWidth) {
+      if (squareOut.current && square.current) {
         gsap.to(square.current, { 
-          duration: 0.3,
-          x: clientX - squareOut.current.clientWidth / 2,
-          y: clientY - squareOut.current.clientHeight / 2,
+          duration: 1,
+          x: clientX - (squareOut.current.clientWidth / 2) +  Math.cos(clientX * Math.PI / squareOut.current.clientWidth) * square.current.clientWidth / 2,
+          ease: "power3"
         })
+
+        if (clientY >= squareOut.current.clientHeight / 10 && clientY <= squareOut.current.clientHeight - squareOut.current.clientHeight / 10) {
+          gsap.to(square.current, { 
+            duration: 2,
+            y: (clientY - lastPositionY.current ) * 20 ,
+            ease: "power3",
+          })
+
+          setPosition({
+            xDirection: clientX - lastPositionX.current,
+            yDirection: clientY - lastPositionY.current
+          })
+
+          clearInterval(timerYReturn.current)
+
+          timerYReturn.current = setTimeout(() => {
+            gsap.to(square.current, { 
+              duration: 2,
+              y: 0,
+              ease: "power3",
+            })
+          }, 500)
+        } else {
+          setPosition({
+            xDirection: clientX - lastPositionX.current,
+            yDirection: 0
+          })
+        }
       }
 
-      if (clientX > lastPositionX.current) {
-        setPosition((prev) => ({
-          ...prev,
-          xDirection: "right"
-        }))
-        lastPositionX.current = clientX
-      } else if (clientX < lastPositionX.current) {
-        setPosition((prev) => ({
-          ...prev,
-          xDirection: "left"
-        }))
-        lastPositionX.current = clientX
-      } else {
-        lastPositionX.current = clientX
-      }
+      lastPositionX.current = clientX
 
-      if (clientY > lastPositionY.current) {
-        setPosition((prev) => ({
-          ...prev,
-          yDirection: "down"
-        }))
-        lastPositionY.current = clientY
-      } else if( clientY < lastPositionY.current) {
-        setPosition((prev) => ({
-          ...prev,
-          yDirection: "up"
-        }))
-        lastPositionY.current = clientY
-      } else {
-        lastPositionY.current = clientY
-      }
+      lastPositionY.current = clientY
 
       clearTimeout(timer.current)
 
       timer.current = setTimeout(() => {
-        setPosition({
-          yDirection: "ahead",
-          xDirection: "ahead"
-        })
+        // setPosition({
+        //   yDirection: 0,
+        //   xDirection: 0
+        // })
       }, 200)
 
     }
@@ -92,9 +95,8 @@ export default function App() {
 
   return (
     <div ref={squareOut} className='container'>
-      
       <div ref={square}>
-        <Canvas camera={{ position: [0, 0, 2] }}>
+        <Canvas camera={{ position: [0, 0, 1.8] }}>
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <ambientLight intensity={0.7} />
         <pointLight position={[10, 10, 10]} />
@@ -102,8 +104,6 @@ export default function App() {
       </Canvas> 
       </div>
     </div>
-    
-   
   )
 }
 
