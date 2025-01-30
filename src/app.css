@@ -11,9 +11,8 @@ html, body {
   height: 100vh;
 
   div {
-    width: 1000px;
-    height: 1000px;
-    /* background-color: yellow; */
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
