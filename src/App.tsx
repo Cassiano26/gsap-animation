@@ -4,6 +4,7 @@ import { ConeModel } from './ConeModel'
 import { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap } from "gsap"
+import CameraController  from './cameraController'
 
 gsap.registerPlugin(useGSAP)
 
@@ -13,8 +14,6 @@ type directions = {
 }
 
 export default function App() {
-  //const [lastPositionY, setLastPositionY] = useState<number>(0)
-  //const [lastPositionX, setLastPositionX] = useState<number>(0)
   const lastPositionY = useRef<number>(500)
   const lastPositionX = useRef<number>(500)
 
@@ -26,23 +25,25 @@ export default function App() {
   const timer = useRef<number | NodeJS.Timeout | null>()
   const timerYReturn = useRef<number | NodeJS.Timeout | null>()
 
-
-  const squareOut = useRef<HTMLDivElement>(null)
   const square = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
 
     function handleMouseMovement(e: MouseEvent) {
       const {clientX, clientY} = e
+      const { innerWidth, innerHeight } = window
 
-      if (squareOut.current && square.current) {
+      console.log(innerHeight)
+      console.log(innerHeight)
+
+      if (square.current) {
         gsap.to(square.current, { 
           duration: 1,
-          x: clientX - (squareOut.current.clientWidth / 2) +  Math.cos(clientX * Math.PI / squareOut.current.clientWidth) * square.current.clientWidth / 2,
+          x: clientX - (innerWidth / 2) +  Math.cos(clientX * Math.PI / innerWidth) * square.current.clientWidth / 2,
           ease: "power3"
         })
 
-        if (clientY >= squareOut.current.clientHeight / 10 && clientY <= squareOut.current.clientHeight - squareOut.current.clientHeight / 10) {
+        if (clientY >= innerHeight / 10 && clientY <= innerHeight - innerHeight / 10) {
           gsap.to(square.current, { 
             duration: 2,
             y: (clientY - lastPositionY.current ) * 20 ,
@@ -94,9 +95,10 @@ export default function App() {
   }, [])
 
   return (
-    <div ref={squareOut} className='container'>
+    <div className='container'>
       <div ref={square}>
         <Canvas camera={{ position: [0, 0.5, 1.8] }}>
+          <CameraController />
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <ambientLight intensity={0.7} />
         <pointLight position={[10, 10, 10]} />
