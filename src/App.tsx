@@ -33,21 +33,17 @@ export default function App() {
       const {clientX, clientY} = e
       const { innerWidth, innerHeight } = window
 
-      console.log(innerHeight)
-      console.log(innerHeight)
-
       if (square.current) {
         gsap.to(square.current, { 
-          duration: 1,
+          duration: 1.5,
           x: clientX - (innerWidth / 2) +  Math.cos(clientX * Math.PI / innerWidth) * square.current.clientWidth / 2,
           ease: "power3"
         })
 
         if (clientY >= innerHeight / 10 && clientY <= innerHeight - innerHeight / 10) {
           gsap.to(square.current, { 
-            duration: 2,
-            y: (clientY - lastPositionY.current ) * 20 ,
-            ease: "power3",
+            duration: 3,
+            y: (clientY - lastPositionY.current ) * 100,
           })
 
           setPosition({
@@ -60,10 +56,10 @@ export default function App() {
           timerYReturn.current = setTimeout(() => {
             gsap.to(square.current, { 
               duration: 2,
-              y: 0,
+              y: -200,
               ease: "power3",
             })
-          }, 500)
+          }, 100)
         } else {
           setPosition({
             xDirection: clientX - lastPositionX.current,
@@ -83,7 +79,7 @@ export default function App() {
           yDirection: 0,
           xDirection: 0
         })
-      }, 200)
+      }, 100)
 
     }
 

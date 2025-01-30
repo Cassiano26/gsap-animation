@@ -13,6 +13,7 @@ html, body {
   div {
     width: 1000px;
     height: 1000px;
+    /* background-color: yellow; */
     display: flex;
     align-items: center;
     justify-content: center;
