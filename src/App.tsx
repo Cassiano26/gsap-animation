@@ -78,10 +78,10 @@ export default function App() {
       clearTimeout(timer.current)
 
       timer.current = setTimeout(() => {
-        // setPosition({
-        //   yDirection: 0,
-        //   xDirection: 0
-        // })
+        setPosition({
+          yDirection: 0,
+          xDirection: 0
+        })
       }, 200)
 
     }
@@ -96,7 +96,7 @@ export default function App() {
   return (
     <div ref={squareOut} className='container'>
       <div ref={square}>
-        <Canvas camera={{ position: [0, 0, 1.8] }}>
+        <Canvas camera={{ position: [0, 0.5, 1.8] }}>
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <ambientLight intensity={0.7} />
         <pointLight position={[10, 10, 10]} />
