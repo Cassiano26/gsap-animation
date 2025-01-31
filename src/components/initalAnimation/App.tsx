@@ -1,10 +1,10 @@
 import './app.css'
 import { Canvas } from '@react-three/fiber'
-import { ConeModel } from './ConeModel'
+import { ConeModel } from '../../ConeModel'
 import { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap } from "gsap"
-import CameraController  from './cameraController'
+import CameraController  from '../../cameraController'
 
 gsap.registerPlugin(useGSAP)
 
